@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { spawn } from "child_process";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const YTDLP = path.join(__dirname, "yt-dlp");
 
 const app = express();
 app.use(cors());
@@ -31,7 +32,7 @@ function isAllowed(url) {
 
 function runYtDlp(args) {
   return new Promise((resolve, reject) => {
-    const proc = spawn("yt-dlp", args);
+    const proc = spawn(YTDLP, args);
     let out = "";
     let err = "";
     proc.stdout.on("data", (d) => (out += d));
@@ -86,7 +87,7 @@ app.get("/api/file", (req, res) => {
   res.setHeader("Content-Disposition", 'attachment; filename="video.mp4"');
   res.setHeader("Content-Type", "video/mp4");
 
-  const proc = spawn("yt-dlp", ["-f", "best", "-o", "-", url]);
+  const proc = spawn(YTDLP, ["-f", "best", "-o", "-", url]);
   proc.stdout.pipe(res);
   proc.on("error", () => res.end());
   proc.stderr.on("data", () => {});
