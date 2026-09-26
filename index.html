@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bee Video</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#0b0b0f;
+ color:white;
+ min-height:100vh;
+}
+.app{
+ max-width:520px;
+ margin:auto;
+ padding:22px 16px 40px;
+}
+header{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ margin-bottom:35px;
+}
+.logo{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ font-size:22px;
+ font-weight:bold;
+}
+.logoIcon{
+ width:42px;
+ height:42px;
+ border-radius:14px;
+ display:grid;
+ place-items:center;
+ background:#f5c400;
+ color:#111;
+ font-size:21px;
+}
+.settings{
+ border:0;
+ background:#18181f;
+ color:white;
+ width:42px;
+ height:42px;
+ border-radius:13px;
+ font-size:19px;
+}
+.hero{
+ text-align:center;
+ margin-bottom:28px;
+}
+.hero h1{
+ font-size:29px;
+ margin:0 0 10px;
+}
+.hero p{
+ color:#92929c;
+ margin:0;
+ line-height:1.5;
+}
+.card{
+ background:#14141b;
+ border:1px solid #24242d;
+ border-radius:22px;
+ padding:17px;
+}
+.inputBox{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ background:#0d0d12;
+ border:1px solid #292933;
+ border-radius:15px;
+ padding:5px 6px 5px 14px;
+}
+input{
+ flex:1;
+ min-width:0;
+ border:0;
+ outline:0;
+ background:transparent;
+ color:white;
+ font-size:15px;
+}
+input::placeholder{color:#666673}
+.clear{
+ border:0;
+ background:transparent;
+ color:#777;
+ font-size:18px;
+}
+.analyze{
+ width:100%;
+ border:0;
+ margin-top:13px;
+ padding:15px;
+ border-radius:15px;
+ background:#f5c400;
+ color:#111;
+ font-size:16px;
+ font-weight:bold;
+}
+.analyze:active{transform:scale(.98)}
+.status{
+ display:none;
+ margin-top:18px;
+ padding:15px;
+ border-radius:15px;
+ background:#1b1b23;
+ color:#aaa;
+ line-height:1.5;
+}
+.result{
+ display:none;
+ margin-top:18px;
+}
+.preview{
+ width:100%;
+ border-radius:16px;
+ background:#09090c;
+ overflow:hidden;
+}
+.preview img{
+ display:block;
+ width:100%;
+ max-height:280px;
+ object-fit:cover;
+}
+.videoInfo{
+ padding:14px 2px 5px;
+}
+.videoTitle{
+ font-weight:bold;
+ font-size:16px;
+}
+.download{
+ width:100%;
+ border:0;
+ margin-top:13px;
+ padding:15px;
+ border-radius:15px;
+ background:#fff;
+ color:#111;
+ font-weight:bold;
+ font-size:16px;
+}
+.section{
+ margin-top:28px;
+}
+.sectionTitle{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:12px;
+}
+.sectionTitle h2{
+ font-size:18px;
+ margin:0;
+}
+.empty{
+ color:#777;
+ text-align:center;
+ padding:25px 10px;
+ background:#14141b;
+ border-radius:18px;
+}
+.historyItem{
+ display:flex;
+ align-items:center;
+ gap:12px;
+ padding:13px;
+ background:#14141b;
+ border-radius:16px;
+ margin-bottom:9px;
+}
+.historyIcon{
+ width:40px;
+ height:40px;
+ display:grid;
+ place-items:center;
+ border-radius:12px;
+ background:#20202a;
+}
+.historyText{
+ flex:1;
+ overflow:hidden;
+}
+.historyText strong{
+ display:block;
+ white-space:nowrap;
+ overflow:hidden;
+ text-overflow:ellipsis;
+}
+.historyText small{
+ color:#777;
+}
+footer{
+ text-align:center;
+ color:#555;
+ font-size:12px;
+ margin-top:35px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <div class="logo">
+    <div class="logoIcon">🐝</div>
+    Bee Video
+  </div>
+  <button class="settings" onclick="showSettings()">⚙</button>
+</header>
+
+<section class="hero">
+  <h1>Télécharge ta vidéo</h1>
+  <p>Colle le lien d’une vidéo que tu es autorisé à télécharger.</p>
+</section>
+
+<div class="card">
+
+  <div class="inputBox">
+    <input id="url"
+           type="url"
+           placeholder="Colle ton lien vidéo ici..."
+           autocomplete="off">
+    <button class="clear" onclick="clearUrl()">×</button>
+  </div>
+
+  <button class="analyze" onclick="analyzeVideo()">
+    🔍 Analyser
+  </button>
+
+  <div id="status" class="status"></div>
+
+  <div id="result" class="result">
+
+    <div class="preview">
+      <img id="thumbnail" alt="Aperçu">
+    </div>
+
+    <div class="videoInfo">
+      <div id="videoTitle" class="videoTitle">
+        Vidéo détectée
+      </div>
+
+      <button class="download" onclick="downloadVideo()">
+        📥 Télécharger
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+<section class="section">
+  <div class="sectionTitle">
+    <h2>Historique</h2>
+    <button
+      onclick="clearHistory()"
+      style="background:none;border:0;color:#f5c400">
+      Effacer
+    </button>
+  </div>
+
+  <div id="history"></div>
+</section>
+
+<footer>
+  Bee Video • Téléchargement de contenus autorisés
+</footer>
+
+</div>
+
+<script>
+
+/*
+==================================================
+CONFIGURATION DU BACKEND
+==================================================
+
+Le serveur (server.js) sert aussi cette page, donc
+l'API est sur la même origine : pas besoin de domaine
+séparé en local. Pour un déploiement où le front et
+le backend sont sur des domaines différents, remplace
+par l'URL complète, ex :
+const API_URL = "https://ton-serveur.com/api";
+
+==================================================
+*/
+
+const API_URL = "/api";
+
+
+/* ---------- éléments ---------- */
+
+const urlInput = document.getElementById("url");
+const statusBox = document.getElementById("status");
+const resultBox = document.getElementById("result");
+const thumbnail = document.getElementById("thumbnail");
+const videoTitle = document.getElementById("videoTitle");
+
+
+/* ---------- analyser ---------- */
+
+async function analyzeVideo(){
+
+    const url = urlInput.value.trim();
+
+    resultBox.style.display = "none";
+
+    if(!url){
+        showStatus("⚠️ Colle d'abord un lien vidéo.");
+        return;
+    }
+
+    if(!isValidUrl(url)){
+        showStatus("⚠️ Le lien n'est pas valide.");
+        return;
+    }
+
+    showStatus("⏳ Analyse du lien...");
+
+    if(!API_URL){
+
+        showStatus(
+          "ℹ️ L'interface est prête. Le serveur de téléchargement doit maintenant être connecté."
+        );
+
+        return;
+    }
+
+    try{
+
+        const response = await fetch(
+            API_URL + "/analyze",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    url:url
+                })
+            }
+        );
+
+        if(!response.ok){
+            throw new Error("Serveur indisponible");
+        }
+
+        const data = await response.json();
+
+        if(!data.success){
+            throw new Error(
+                data.message || "Vidéo non disponible"
+            );
+        }
+
+        videoTitle.textContent =
+            data.title || "Vidéo détectée";
+
+        if(data.thumbnail){
+            thumbnail.src = data.thumbnail;
+            thumbnail.style.display = "block";
+        }else{
+            thumbnail.style.display = "none";
+        }
+
+        resultBox.style.display = "block";
+
+        hideStatus();
+
+    }catch(error){
+
+        showStatus(
+          "❌ Impossible d'analyser cette vidéo."
+        );
+
+    }
+}
+
+
+/* ---------- téléchargement ---------- */
+
+async function downloadVideo(){
+
+    const url = urlInput.value.trim();
+
+    if(!url) return;
+
+    if(!API_URL){
+
+        showStatus(
+          "ℹ️ Connecte d'abord le backend de téléchargement."
+        );
+
+        return;
+    }
+
+    showStatus("⏳ Préparation du téléchargement...");
+
+    try{
+
+        const response = await fetch(
+            API_URL + "/download",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    url:url
+                })
+            }
+        );
+
+        if(!response.ok){
+            throw new Error();
+        }
+
+        const data = await response.json();
+
+        if(!data.success || !data.download_url){
+            throw new Error();
+        }
+
+        addHistory(
+            videoTitle.textContent,
+            data.download_url
+        );
+
+        window.location.href = data.download_url;
+
+        showStatus("✅ Téléchargement lancé.");
+
+    }catch(error){
+
+        showStatus(
+          "❌ Le téléchargement n'a pas pu être lancé."
+        );
+
+    }
+}
+
+
+/* ---------- historique ---------- */
+
+function addHistory(title, downloadUrl){
+
+    let history =
+        JSON.parse(
+            localStorage.getItem("beeVideoHistory") || "[]"
+        );
+
+    history.unshift({
+        title:title,
+        url:downloadUrl,
+        date:new Date().toLocaleString("fr-FR")
+    });
+
+    history =
+        history.slice(0,20);
+
+    localStorage.setItem(
+        "beeVideoHistory",
+        JSON.stringify(history)
+    );
+
+    renderHistory();
+}
+
+
+function renderHistory(){
+
+    const container =
+        document.getElementById("history");
+
+    const history =
+        JSON.parse(
+            localStorage.getItem("beeVideoHistory") || "[]"
+        );
+
+    if(history.length === 0){
+
+        container.innerHTML =
+          `<div class="empty">
+            Aucun téléchargement pour le moment.
+          </div>`;
+
+        return;
+    }
+
+    container.innerHTML =
+        history.map((item,index)=>`
+
+        <div class="historyItem">
+
+          <div class="historyIcon">🎬</div>
+
+          <div class="historyText">
+            <strong>${escapeHtml(item.title)}</strong>
+            <small>${item.date}</small>
+          </div>
+
+          <button
+            onclick="openHistory(${index})"
+            style="
+              background:none;
+              border:0;
+              color:#f5c400;
+              font-size:18px">
+            ▶
+          </button>
+
+        </div>
+
+        `).join("");
+}
+
+
+function openHistory(index){
+
+    const history =
+        JSON.parse(
+            localStorage.getItem("beeVideoHistory") || "[]"
+        );
+
+    if(history[index]){
+        window.location.href =
+            history[index].url;
+    }
+}
+
+
+function clearHistory(){
+
+    localStorage.removeItem(
+        "beeVideoHistory"
+    );
+
+    renderHistory();
+}
+
+
+/* ---------- utilitaires ---------- */
+
+function isValidUrl(value){
+
+    try{
+
+        const u = new URL(value);
+
+        return (
+            u.protocol === "http:" ||
+            u.protocol === "https:"
+        );
+
+    }catch{
+
+        return false;
+    }
+}
+
+
+function clearUrl(){
+
+    urlInput.value = "";
+
+    resultBox.style.display = "none";
+
+    hideStatus();
+}
+
+
+function showStatus(message){
+
+    statusBox.textContent = message;
+
+    statusBox.style.display = "block";
+}
+
+
+function hideStatus(){
+
+    statusBox.style.display = "none";
+}
+
+
+function showSettings(){
+
+    alert(
+      "Bee Video\n\n" +
+      "Version web\n" +
+      "Téléchargement de contenus autorisés."
+    );
+}
+
+
+function escapeHtml(text){
+
+    return String(text)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+}
+
+
+/* ---------- démarrage ---------- */
+
+renderHistory();
+
+</script>
+
+</body>
+</html>
